@@ -17,6 +17,11 @@ export const CreateInfluencerPage = () => {
     username: ''
   });
 
+  const validateName = (name: string): boolean => {
+    // Allows letters, spaces, hyphens, and apostrophes
+    return /^[A-Za-z\s'-]+$/.test(name);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -73,17 +78,22 @@ export const CreateInfluencerPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
+  
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
       setError('First name and last name are required');
       return;
     }
-
+  
+    if (!validateName(formData.firstName) || !validateName(formData.lastName)) {
+      setError('Names can only contain letters, spaces, hyphens, and apostrophes');
+      return;
+    }
+  
     if (formData.socialAccounts.length === 0) {
       setError('At least one social account is required');
       return;
     }
-
+  
     try {
       await createInfluencer(formData);
       navigate('/');
